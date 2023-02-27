@@ -1,0 +1,175 @@
+#!/bin/bash
+
+function print_menu()  # selected_item, ...menu_items
+{
+	local function_arguments=($@)
+
+	local selected_item="$1"
+	local menu_items=(${function_arguments[@]:1})
+	local menu_size="${#menu_items[@]}"
+
+	for (( i = 0; i < $menu_size; ++i ))
+	do
+		if [ "$i" = "$selected_item" ]
+		then
+			echo "-> ${menu_items[i]}"
+		else
+			echo "   ${menu_items[i]}"
+		fi
+	done
+}
+
+function run_menu()  # selected_item, ...menu_items
+{
+	local function_arguments=($@)
+
+	local selected_item="$1"
+	local menu_items=(${function_arguments[@]:1})
+	local menu_size="${#menu_items[@]}"
+	local menu_limit=$((menu_size - 1))
+
+	clear
+	print_menu "$selected_item" "${menu_items[@]}"
+	
+	while read -rsn1 input
+	do
+		case "$input"
+		in
+			$'\x1B')  # ESC ASCII code (https://dirask.com/posts/ASCII-Table-pJ3Y0j)
+				read -rsn1 -t 0.1 input
+				if [ "$input" = "[" ]  # occurs before arrow code
+				then
+					read -rsn1 -t 0.1 input
+					case "$input"
+					in
+						A)  # Up Arrow
+							if [ "$selected_item" -ge 1 ]
+							then
+								selected_item=$((selected_item - 1))
+								clear
+								print_menu "$selected_item" "${menu_items[@]}"
+							fi
+							;;
+						B)  # Down Arrow
+							if [ "$selected_item" -lt "$menu_limit" ]
+							then
+								selected_item=$((selected_item + 1))
+								clear
+								print_menu "$selected_item" "${menu_items[@]}"
+							fi
+							;;
+					esac
+				fi
+				read -rsn5 -t 0.1  # flushing stdin
+				;;
+			"")  # Enter key
+				return "$selected_item"
+				;;
+		esac
+	done
+}
+
+# Usage example:
+selected_item=0
+menu_items=('Stow_user_files' 'Install_packages' 'Install_system_files' 'Exit')
+
+run_menu "$selected_item" "${menu_items[@]}"
+menu_result="$?"
+
+echo
+
+case "$menu_result"
+in
+	0)
+        # Install stow
+        yay -S stow
+
+        cd ~/dots
+
+        stow alacritty/ cpupower_gui/ hypr/ micro/ scripts/ swaylock/ swaync/ waybar/ wlogout/ wofi/
+
+
+		echo -e '\n\nUser dotfiles have been successfully stowed...\n\n'
+		;;
+	1)
+
+        # Install display manager
+        yay -S sddm-git
+        sudo systemctl enable sddm.service
+
+        # Install wayland desktop environment packages
+        yay -S hyprland-nvidia-hidpi-git
+        yay -S hyprpaper-git
+        yay -S grimblast-git
+        yay -S swaylock-effects-git
+        yay -S swaync-git
+        yay -S waybar-hyprland-git
+        yay -S wl-clipboard-git
+        yay -S wlogout-git
+        yay -S wofi
+        yay -S wofi-calc-git
+        yay -S wofi-wifi-menu-git
+
+        # Install system tool packages
+        yay -S alacritty
+        yay -S blueman-git
+        sudo systemctl enable bluetooth.service
+        yay -S btop
+        yay -S imv-git
+        yay -S micro-git
+        yay -S gvfs-smb
+		yay -S gvfs-nfs
+        yay -S mediainfo
+        yay -S lxappearance
+        yay -S nautilus
+        yay -S playerctl
+        yay -S python-pip
+		yay -S thinkfan
+		yay -S thinkfan-ui
+
+        # Install font packages
+        yay -S ttf-fantasque-sans-mono
+        yay -S ttf-icomoon-feather
+        yay -S ttf-font-awesome
+
+        # Install theme packages
+        yay -S gradience
+        yay -S adw-gtk-theme
+        yay -S adw-gtk3
+
+        # Install additional packages
+        yay -S 1password
+        yay -S cpupower-gui-git
+        yay -S firefox-nightly
+		yay -S mpv
+        yay -S mullvad-vpn
+        yay -S runelite
+        yay -S spotify
+		yay -S swappy
+        yay -S tor-browser
+        # yay -S vscodium-bin
+        yay -S vscodium-bin-marketplace
+		echo -e '\n\n\Packages installed...\n\n'
+		;;
+	2)
+        # Install custom pacman.conf file to /etc/pacman.conf
+		sudo cp -p pacman/etc/pacman.conf /etc/pacman.conf
+        
+        # Install hyprland-custom nvidia settings .desktop file for wayland-sessions
+        sudo cp -p wayland-sessions/usr/share/wayland-sessions/hyprland-custom.desktop /usr/share/wayland-sessions/hyprland-custom.desktop
+
+		# Install sddm theme
+		sudo cp -p sddm/etc/sddm.conf.d/theme.conf /etc/sddm.conf.d/theme.conf
+		sudo cp -p sddm/usr/share/themes/rosepine /usr/share/sddm/themes/
+
+		# Add nvidia nomodeset to kernel settings
+		sudo echo -n " nvidia_drm.modeset=1" >> /etc/kernel/cmdline
+		# Reinstall kernel with new settings
+		sudo reinstall-kernels
+		
+        echo -e '\n\n\System files are now installed...\n\n'
+		;;
+	3)
+		echo -e '\n\n\Exiting...\n\n\Please reboot now...\n\n'
+		;;
+esac

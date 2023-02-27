@@ -1,0 +1,10 @@
+hide_scroll=true
+show=drun
+width=20%
+lines=6
+term=alacritty
+layer=overlay
+allow_images=true
+insensitive=true
+prompt=
+image_size=30

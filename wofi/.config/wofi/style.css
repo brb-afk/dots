@@ -1,0 +1,48 @@
+@define-color highlight #eb6f92;
+@define-color bg  #191724;
+@define-color bg-alt  #26233a;
+@define-color text #ebbcba;
+
+*{
+    font-family: Fantasque Sans Mono;
+    font-size: 14px;
+}
+
+window {
+    border: 3px solid @highlight;
+    border-radius:5px;
+}
+
+
+#input {
+    margin-bottom:10px;
+    padding:5px;
+    outline:none;
+    border:none;
+    color: @text;
+    background-color: @bg;
+}
+
+#inner-box {
+    background-color: @bg;
+}
+
+#outer-box {
+    margin: 5px;
+    padding:15px;
+    background-color: @bg;
+}
+
+#text {
+    padding: 5px;
+    color: @text;
+}
+
+#entry:nth-child(even) {
+    background-color: @bg-alt;
+}
+
+#entry:selected {
+    background-color: @highlight;
+    color:@bg;
+}

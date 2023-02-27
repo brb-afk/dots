@@ -1,0 +1,115 @@
+{
+  "position": "top", 
+  "layer": "top",
+  "height":30,
+  "modules-left": ["custom/power", "wlr/workspaces"],
+  "modules-center": ["custom/spotibar"],
+  "modules-right": ["idle_inhibitor","pulseaudio", "backlight", "battery", "network", "tray", "clock", "custom/notification"],
+  "custom/power": {
+    "tooltip": false,
+    "format": "",
+    "on-click-right": "$HOME/.config/scripts/wlogout"
+  },
+  "wlr/workspaces": {
+		"disable-scroll": true,
+		"all-outputs": true,
+    "active-only": false,
+    "on-click": "activate",
+		"format": "{icon}",
+    "format-icons": {
+      "default": "",
+      "active": ""
+    }
+   },
+  "custom/spotibar": {
+    "exec-if": "pgrep spotify",
+    "interval": 1,
+    "format": "{}",
+    "return-type": "bash",
+    "max-length": 400, 
+    "on-click": "playerctl  -p spotify play-pause",
+    "on-click-right": "playerctl -p spotify next",
+    "exec": "$HOME/.config/scripts/spotibar"
+  },
+  "pulseaudio": {
+    "tooltip": false,
+    "scroll-step": 5,
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": ["", "", ""]
+    },
+    "format": "{icon} {volume}",
+    "format-bluetooth": "{volume}% {icon} {format_source}",
+    "format-bluetooth-muted": " {icon} {format_source}",
+    "format-muted": " muted",
+    "format-source": "{volume}% ",
+    "format-source-muted": "",
+    "on-click": "pactl set-sink-mute 0 toggle",
+    "on-click-right": "pavucontrol"
+  },
+  "backlight": {
+    "format": "{icon}",
+    "format-alt": "{icon} {percent}",
+    "format-icons": ["", "", "", "", "", "", "", "", ""],
+    "on-scroll-up": "brightnessctl -c backlight set 1%+",
+    "on-scroll-down": "brightnessctl -c backlight set 1%-"
+  },
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+        "activated": "",
+        "deactivated": ""
+    }
+  },
+  "network" : {
+    "tooltip": false,
+		"format": "",
+    "format-alt": "  {essid} - {ipaddr}",
+		"format-disconnected": "睊",
+    "on-click-right": "alacritty --command nmtui"
+	},
+  "battery": {
+    "interval":1,
+    "states": {
+      "warning": 50,
+      "critical": 25
+    },
+    "format": "{icon} {capacity}",
+    "format-charging": " {capacity}",
+    "format-plugged": " {capacity}",
+    "format-alt": "{icon} {time}",
+    "format-icons": ["", "", "", "", ""],
+    "on-click-right": "cpupower-gui"
+  },
+  "tray": {
+    "spacing": 10
+  },
+  "clock": {
+    "interval": 1,
+    "timezone": "GB",
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><big>{calendar}</big></tt>",
+    "format": " {:%I:%M}",
+    "format-alt": " {:%A %d %B %I:%M:%S}"
+  },
+  "custom/notification": {
+    "tooltip": false,
+    "format": "{icon}",
+    "format-icons": {
+         "notification": "<span foreground='#eb6f92'><sup></sup></span>",
+         "none": "",
+         "dnd-notification": "<span foreground='#eb6f92'><sup></sup></span>",
+         "dnd-none": ""
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw -R -rs",
+    "on-click-right": "swaync-client -d -sw -R -rs",
+    "escape": true
+  },
+}

@@ -1,0 +1,9 @@
+# Uses swayidle / wlopm / swaylock to time system idle, dim display, and lock
+swayidle -w \
+    timeout 180 'brightnessctl -s && brightnessctl set 15%' \
+    resume 'brightnessctl -r' \
+    timeout 200 "wlopm --off '*'" \
+    resume "wlopm --on '*'" \
+    timeout 210 'swaylock -f' \
+    resume "brightnessctl -r && wlopm --on '*'" 
+    before-sleep 'swaylock -f'

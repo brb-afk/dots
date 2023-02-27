@@ -1,0 +1,15 @@
+#!/bin/bash
+# Get the currently playing Spotify artist and song data using playerctl
+song="$(playerctl -p spotify metadata xesam:artist) - $(playerctl -p spotify metadata xesam:title)"
+
+# Check if the song is paused
+if [ "$(playerctl -p spotify status)" = "Paused" ]; then
+  # If the song is paused, print a message indicating that it is paused
+  echo " $song"
+elif [ "$song" = " - " ]; then
+  # If the song is not paused but there is no song currently playing, print an empty string
+  echo ""
+else
+  # If the song is not paused and there is a song currently playing, print the song without the paused message
+  echo "$song"
+fi

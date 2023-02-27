@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Hyprland-custom
+Comment=An intelligent dynamic tiling Wayland compositor
+Exec=/home/craig/.config/scripts/hyprland-custom
+Type=Application
